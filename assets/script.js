@@ -6,7 +6,7 @@ const API_KEY = "pk.eyJ1Ijoicml6a2hhbCIsImEiOiJja2NjNDE1ZjkwMTBwMndxbmFxNWpydXh3
  * Map located in Mabes Pemadam Kebakaran
  * @type {mixed}
  */
-const map = L.map('map').setView([-5.151996, 119.416099], 12);
+const map = L.map('map').setView([-5.151996, 119.416099], 13);
 
 map.on('click', (e) => {
     L.popup()
@@ -21,7 +21,7 @@ map.on('click', (e) => {
  */
 L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${API_KEY}`, {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 14,
+    maxZoom: 16,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
