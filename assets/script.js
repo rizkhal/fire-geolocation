@@ -34,6 +34,12 @@ L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
  */
 const db = firebase.database().ref().child('fire-geolocation');
 
+/**
+ * Get lat lng from firebase
+ * @param  {callback} 'value'
+ * @param  {object} (snapshot
+ * @return {void}
+ */
 db.on('value', (snapshot) => {
     if (snapshot.exists()) {
         const loc = [];
@@ -62,6 +68,10 @@ db.on('value', (snapshot) => {
                         m.bindPopup(p).openPopup();
                 });
 
+                /**
+                 * Circle of the fire
+                 * @type {void}
+                 */
                 const circle = L.circle(loc, {
                     color: 'red',
                     fillColor: '#f03',
@@ -69,6 +79,11 @@ db.on('value', (snapshot) => {
                     radius: 500
                 }).addTo(map);
 
+                /**
+                 * Routing on the road
+                 * @param  {array} x
+                 * @return {void} 
+                 */
                 const routing = L.Routing.control({
                     waypoints: [
                         L.latLng(-5.151996, 119.416099),
