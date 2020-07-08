@@ -1,12 +1,14 @@
 // const loc = [-5.151858, 119.449124];
 
+const MABES = [-5.151996, 119.416099];
+
 const API_KEY = "pk.eyJ1Ijoicml6a2hhbCIsImEiOiJja2NjNDE1ZjkwMTBwMndxbmFxNWpydXh3In0.hBOjF3Ivn7bfT7hK1gmydg";
 
 /**
  * Map located in Mabes Pemadam Kebakaran
  * @type {mixed}
  */
-const map = L.map('map').setView([-5.151996, 119.416099], 13);
+const map = L.map('map').setView(MABES, 13);
 
 map.on('click', (e) => {
     L.popup()
@@ -34,67 +36,66 @@ L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
  */
 const db = firebase.database().ref().child('fire-geolocation');
 
-/**
- * Get lat lng from firebase
- * @param  {callback} 'value'
- * @param  {object} (snapshot
- * @return {void}
- */
-db.on('value', (snapshot) => {
-    if (snapshot.exists()) {
-        const loc = [];
-        snapshot.forEach(list => {
-            if (list.val().status) {
-                loc.push(list.val().lat, list.val().lng);
-                /**
-                 * LatLng of the office and fire where sensor detector
-                 * @type {Array}
-                 */
-                const markers = [
-                    {position: [-5.151996, 119.416099], popup: "MABES Pemadam Kebakaran"},
-                    {position: loc, popup: "Titik Api"},
-                ];
+const getLastItem = (ref, callback) => {
+    ref.limitToLast(1).once('child_added', (snapshot) => {
+        callback(snapshot.val());
+    });
+};
 
-                /**
-                 * Markers of the location
-                 * @param  {array} obj
-                 * @return {void}
-                 */
-                markers.some(obj => {
-                    let m = L.marker(obj.position).addTo(map),
-                        p = new L.Popup({autoClose: false})
-                                 .setContent(obj.popup)
-                                 .setLatLng(obj.position);
-                        m.bindPopup(p).openPopup();
-                });
 
-                /**
-                 * Circle of the fire
-                 * @type {void}
-                 */
-                const circle = L.circle(loc, {
-                    color: 'red',
-                    fillColor: '#f03',
-                    fillOpacity: 0.5,
-                    radius: 500
-                }).addTo(map);
+getLastItem(db, (value) => {
+    if (value.status) {
+        const loc = [value.lat, value.lng];
 
-                /**
-                 * Routing on the road
-                 * @param  {array} x
-                 * @return {void} 
-                 */
-                const routing = L.Routing.control({
-                    waypoints: [
-                        L.latLng(-5.151996, 119.416099),
-                        L.latLng(loc.map(x => x)),
-                    ],
-                    routeWhileDragging: true,
-                }).addTo(map);
-            }
+        /**
+         * LatLng of the office and fire where sensor detector
+         * @type {Array}
+         */
+        const markers = [
+            {position: MABES, popup: "MABES Pemadam Kebakaran"},
+            {position: loc, popup: "Titik Api"},
+        ];
+
+        /**
+         * Markers of the location
+         * @param  {array} obj
+         * @return {void}
+         */
+        markers.some(obj => {
+            let m = L.marker(obj.position).addTo(map),
+                p = new L.Popup({autoClose: false})
+                         .setContent(obj.popup)
+                         .setLatLng(obj.position);
+                m.bindPopup(p).openPopup();
         });
+
+        /**
+         * Circle of the fire
+         * @type {void}
+         */
+        const circle = L.circle(loc, {
+            color: 'red',
+            fillColor: '#f03',
+            fillOpacity: 0.5,
+            radius: 500
+        }).addTo(map);
+
+        /**
+         * Routing on the road
+         * @param  {array} x
+         * @return {void} 
+         */
+        const routing = L.Routing.control({
+            waypoints: [
+                L.latLng(MABES),
+                L.latLng(loc.map(x => x)),
+            ],
+            routeWhileDragging: true,
+        }).addTo(map);    
     } else {
-        console.error('Table doesnt exists!');
+        L.marker(MABES).addTo(map)
+         .bindPopup('MABES Pemadam Kebakaran.')
+         .openPopup();
     }
 });
 
