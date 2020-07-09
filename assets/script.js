@@ -1,5 +1,3 @@
-// const loc = [-5.151858, 119.449124];
-
 const MABES = [-5.151996, 119.416099];
 
 const API_KEY = "pk.eyJ1Ijoicml6a2hhbCIsImEiOiJja2NjNDE1ZjkwMTBwMndxbmFxNWpydXh3In0.hBOjF3Ivn7bfT7hK1gmydg";
@@ -37,11 +35,12 @@ L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 const db = firebase.database().ref().child('fire-geolocation');
 
 const getLastItem = (ref, callback) => {
-    ref.limitToLast(1).once('child_added', (snapshot) => {
-        callback(snapshot.val());
+    ref.limitToLast(1).once('value', (snapshot) => {
+        snapshot.forEach(data => {
+            callback(data.val());
+        });
     });
 };
-
 
 getLastItem(db, (value) => {
     if (value.status) {
@@ -77,7 +76,7 @@ getLastItem(db, (value) => {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.5,
-            radius: 500
+            radius: 200
         }).addTo(map);
 
         /**
