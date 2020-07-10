@@ -11,8 +11,6 @@ SoftwareSerial ss(4, 5);
 class Sensor
 {
   private:
-    String latitude;
-    String longitude;
     char *host = "skripsinaicank.firebaseio.com";
     char *auth = "0DRWE27ehyBPpA16HyeBjbSvmOoY5mjoZTAhXZKC";
 
@@ -27,10 +25,7 @@ class Sensor
     {
       while (ss.available() > 0) {
         if (gps.encode(ss.read())) {
-          if (gps.location.isUpdated()) {
-            latitude = String(gps.location.lat(), 6);
-            longitude = String(gps.location.lng(), 6);
-          }
+          postLatLng();
         }
       }
 
@@ -40,8 +35,11 @@ class Sensor
       }
     }
 
-    void action()
+    void postLatLng()
     {
+      String latitude = String(gps.location.lat(), 6);
+      String longitude = String(gps.location.lng(), 6);
+
       if (gps.location.isValid()) {
         StaticJsonBuffer<200> jsonBuffer;
         JsonObject& obj = jsonBuffer.createObject();
@@ -52,7 +50,15 @@ class Sensor
 
         Serial.println();
         obj.prettyPrintTo(Serial);
+
+        Firebase.set("fire-geolocation", obj);
+
+        if (Firebase.failed()) {
+          Serial.println(Firebase.error());
+        }
       }
+
+      delay(2 * 5000);
     }
 };
 

@@ -15,5 +15,4 @@ void setup()
 void loop()
 {
   sensors.loop();
-  sensors.action();
 }

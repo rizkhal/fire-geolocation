@@ -1,14 +1,9 @@
 {
   "fire-geolocation" : [ 
    {
-    "lat": -5.151918,
-    "lng" : 119.416018,
-    "status" : true
-   },
-   {
-    "lat": -5.151996,
-    "lng" : 119.416099,
-    "status" : true
-   }
+      "lat": "-5.219285",
+      "lng": "119.548442",
+      "status": true
+    }
   ]
 }

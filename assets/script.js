@@ -1,5 +1,8 @@
+
+/** @type {Array} MABES PDAM location */
 const MABES = [-5.151996, 119.416099];
 
+/** @type {String} MAPBOX Secret Key !important: please dont change it */
 const API_KEY = "pk.eyJ1Ijoicml6a2hhbCIsImEiOiJja2NjNDE1ZjkwMTBwMndxbmFxNWpydXh3In0.hBOjF3Ivn7bfT7hK1gmydg";
 
 /**
@@ -21,7 +24,7 @@ map.on('click', (e) => {
  */
 L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${API_KEY}`, {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    maxZoom: 16,
+    maxZoom: 19,
     id: 'mapbox/streets-v11',
     tileSize: 512,
     zoomOffset: -1,
@@ -32,8 +35,14 @@ L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
  * Database reference
  * @type {object}
  */
-const db = firebase.database().ref().child('fire-geolocation');
+const db = firebase.database().ref();
 
+/**
+ * Get last item from firebase
+ * @param  {object}   ref
+ * @param  {Function} callback
+ * @return {mixed}
+ */
 const getLastItem = (ref, callback) => {
     ref.limitToLast(1).once('value', (snapshot) => {
         snapshot.forEach(data => {
