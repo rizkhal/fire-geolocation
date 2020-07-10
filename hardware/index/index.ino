@@ -6,12 +6,12 @@ Sensor sensors;
 
 void setup()
 {
-  Serial.begin(9600);  
-  sensors.setup(9600);
-  
-  if(gps.location.isValid()) {
+  Serial.begin(9600);
+  if (gps.location.isValid()) {
     wifi.setup();
   }
+
+  sensors.setup(9600);
 }
 
 void loop()
