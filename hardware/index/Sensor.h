@@ -13,8 +13,8 @@ class Sensor
   private:
     String latitude;
     String longitude;
-    char *host = "https://skripsinaicank.firebaseio.com/";
-    char *auth = "PRkyaIvLUNn0M6xqenvxFdXX6mFCgQM3Q7gXHU10";
+    char *host = "skripsinaicank.firebaseio.com";
+    char *auth = "0DRWE27ehyBPpA16HyeBjbSvmOoY5mjoZTAhXZKC";
 
   public:
     void setup(int baud)
@@ -38,23 +38,21 @@ class Sensor
         Serial.println(F("No GPS detected."));
         while (true);
       }
+    }
 
+    void action()
+    {
       if (gps.location.isValid()) {
-        Serial.print("Latitude: "); Serial.println(latitude);
-        Serial.print("Longitude: "); Serial.println(longitude);
-        
-        Firebase.pushString("lat", latitude);
-        Firebase.pushString("lng", longitude);
-        Firebase.pushBool("status", true);
-      }
+        StaticJsonBuffer<200> jsonBuffer;
+        JsonObject& obj = jsonBuffer.createObject();
 
-      if (Firebase.failed()) {
-        Serial.print("pushing /logs failed:");
-        Serial.println(Firebase.error());
-        return;
-      }
+        obj["lat"] = latitude;
+        obj["lng"] = longitude;
+        obj["status"] = true;
 
-      delay(1000);
+        Serial.println();
+        obj.prettyPrintTo(Serial);
+      }
     }
 };
 
