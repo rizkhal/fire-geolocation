@@ -8,6 +8,8 @@
 TinyGPSPlus gps;
 SoftwareSerial ss(4, 5);
 
+const int flame = D0;
+
 class Sensor
 {
   private:
@@ -37,28 +39,34 @@ class Sensor
 
     void postLatLng()
     {
-      String latitude = String(gps.location.lat(), 6);
-      String longitude = String(gps.location.lng(), 6);
-
       if (gps.location.isValid()) {
         StaticJsonBuffer<200> jsonBuffer;
         JsonObject& obj = jsonBuffer.createObject();
 
-        obj["lat"] = latitude;
-        obj["lng"] = longitude;
-        obj["status"] = true;
+        obj["lat"] = String(gps.location.lat(), 6);
+        obj["lng"] = String(gps.location.lng(), 6);
 
-        Serial.println();
-        obj.prettyPrintTo(Serial);
+        bool fire = digitalRead(flame);
 
-        Firebase.set("fire-geolocation", obj);
+        if (fire) {
+          obj["status"] = true;
+          Firebase.set("fire-geolocation", obj);
+          delay(5000);
+        } else {
+          obj["status"] = false;
+          Firebase.set("fire-geolocation", obj);
+          delay(5000);
+        }
 
         if (Firebase.failed()) {
           Serial.println(Firebase.error());
         }
+
+        Serial.println();
+        obj.prettyPrintTo(Serial);
       }
 
-      delay(2 * 5000);
+      delay(5000);
     }
 };
 

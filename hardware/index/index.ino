@@ -7,7 +7,7 @@ Sensor sensors;
 void setup()
 {
   Serial.begin(9600);
-  
+
   wifi.setup();
   sensors.setup(9600);
 }
