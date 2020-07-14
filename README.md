@@ -13,9 +13,15 @@
     <a href="https://github.com/codegoen/fire-geolocation">
         <img alt="GitHub language count" src="https://img.shields.io/github/languages/count/codegoen/fire-geolocation?style=flat-square">
     </a>
+    <a href="http://hits.dwyl.com/codegoen/fire-geolocation">
+        <img src="http://hits.dwyl.com/codegoen/fire-geolocation.svg" alt="Open Collective">
+    </a>
+    <a href="https://saythanks.io/to/lamaaurizkhal@gmail.com">
+        <img src="https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg" alt="Open Collective">
+    </a>
 </p>
 
-### Diagram Of The Project
+### Diagram Of The Project.
 
 <img src="docs/doc1.jpg" alt="Thumbnail" align="center">
 
