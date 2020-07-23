@@ -65,8 +65,9 @@ class Sensor
         Serial.println();
         obj.prettyPrintTo(Serial);
       }
+      
 
-      delay(5000);
+      delay(4000);
     }
 };
 
