@@ -38,7 +38,9 @@ FireMap = (function(window) {
             fillColor: '#f03',
             fillOpacity: 0.5,
             radius: 500
-        }).addTo(map);
+        }).addTo(map)
+            .bindPopup(`Lat: ${waypoints[1].lat}. Lng: ${waypoints[1].lng}`)
+            .openPopup();
 
         routingControl = L.Routing.control({
             waypoints: waypoints
