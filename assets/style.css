@@ -26,3 +26,15 @@ body {
     flex: 1;
     background: #f0f0f0;
 }
+
+#info {
+    margin-left: 2rem;
+}
+
+#info h4 {
+    margin: 1rem 0;
+}
+
+#info h4:first-child {
+    margin-top: 2rem;
+}

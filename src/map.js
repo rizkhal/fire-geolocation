@@ -11,10 +11,22 @@ FireMap = (function(window) {
 
     let mapId = '',
         map = null,
+        fire = null,
         circle = null,
         baseMaps = {},
         overlayMaps = {},
         routingControl = null;
+
+    const mabes = [
+      {
+        'pos': [-5.151996, 119.416099],
+        'pop': 'Jalan Doktor Sam Ratulangi, Ujung Pandang, Mangkura, Kec. Makassar, Kota Makassar, Sulawesi Selatan 90113'
+      },
+      {
+        'pos': [-5.161595, 119.448821],
+        'pop': 'Ruko Mirah 2, Jl. Pengayoman, Pandang, Kec. Panakkukang, Kota Makassar, Sulawesi Selatan 90222'
+      },
+    ];
 
     const init = (mapLayerId, options) => {
         settings = L.extend(settings, options);
@@ -26,25 +38,78 @@ FireMap = (function(window) {
         return map;
     };
 
-    const addRoutingControl = (waypoints) => { 
+    const addRoutingControl = (loc) => {
         if (routingControl != null) {
             removeRoutingControl();
         }
 
-        var loc = [waypoints[1].lat, waypoints[1].lng];
+        let p,
+            marker,
+            length = [],
+            coords = [];
+
+        mabes.forEach((obj) => {
+            marker = L.marker(obj.pos).addTo(map),
+                p = new L.Popup({
+                        autoClose: false,
+                        closeOnClick: false
+                    })
+                    .setContent(obj.pop)
+                    .setLatLng(obj.pos);
+
+            marker.bindPopup(p).openPopup();
+
+            // cords from firefighter offices
+            coords.push(obj.pos);
+        });
+
+        var closset = L.GeometryUtil.closest(map, [coords], loc, true);
+
+        var close = [closset.lat, closset.lng];
 
         circle = L.circle(loc, {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.5,
             radius: 500
-        }).addTo(map)
-            .bindPopup(`Lat: ${waypoints[1].lat}. Lng: ${waypoints[1].lng}`)
-            .openPopup();
+        }).addTo(map);
 
         routingControl = L.Routing.control({
-            waypoints: waypoints
+            waypoints: [close, loc]
         }).addTo(map);
+
+        routingControl.hide();
+
+        let name;
+        for (var ayu in mabes) {
+            if (mabes[ayu].pos[0] == close[0] && mabes[ayu].pos[1] == close[1]) {
+                name = mabes[ayu].pop;
+            }
+        }
+
+        let element = document.getElementById('info'),
+            url  = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc.lat}&lon=${loc.lng}`;
+
+        f(url).then(response => {
+            fire = L.marker(loc).addTo(map).bindPopup(`Titik Api: ${response.address.road}`).openPopup();
+
+            swal({
+                title: "Titik Api Terdeteksi!",
+                text: `Api terdeteksi di jalan ${response.address.road}`,
+                icon: "info",
+            });
+        });
+    };
+
+    const f = async (url) => {
+        return await fetch(url)
+            .then((response) => response.json())
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                console.error(error);
+            });
     };
 
     const removeRoutingControl = () => {
@@ -53,6 +118,7 @@ FireMap = (function(window) {
             map.removeLayer(circle);
             routingControl = null;
             circle = null;
+            fire = null;
         }
     };
 

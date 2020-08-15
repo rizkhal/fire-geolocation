@@ -67,7 +67,7 @@ class Sensor
       }
       
 
-      delay(4000);
+      delay(1000);
     }
 };
 

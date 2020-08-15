@@ -8,6 +8,15 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
     <link rel="stylesheet" href="assets/style.css">
+    <style>
+      .swal-text,
+      .leaflet-popup-content {
+        text-align: center;
+      }
+      .leaflet-control-container .leaflet-routing-container-hide {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <main class="container">
@@ -15,6 +24,10 @@
     </main>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-geometryutil@0.9.3/src/leaflet.geometryutil.min.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+    integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+    crossorigin=""></script>
     <!-- The core Firebase JS SDK is always required and must be listed first -->
     <script src="https://www.gstatic.com/firebasejs/6.2.0/firebase.js"></script>
 
@@ -35,30 +48,26 @@
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
     </script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="src/firebase.js"></script>
     <script src="src/map.js"></script>
     <script lang="javascript">
+      window.onload = function() {
+        FireMap.init('map', {
+          zoom: 13,
+          center: [-5.161595, 119.448821]
+        });
 
-      const MABES = [-5.151996, 119.416099];
+        Firebase.getLastItem(function(value) {
+          const loc = [value.lat, value.lng];
 
-      FireMap.init('map', {
-        zoom: 13,
-        center: L.latLng(MABES),
-      });
-
-      Firebase.getLastItem(function(value) {
-        const loc = [value.lat, value.lng];
-
-        if (value.status) {
-          FireMap.addRoutingControl([
-            L.latLng(MABES),
-            L.latLng(loc)
-          ]);
-        } else {
-          FireMap.removeRoutingControl();
-        }
-      });
-
+          if (value.status) {
+            FireMap.addRoutingControl(L.latLng(loc));
+          } else {
+            FireMap.removeRoutingControl();
+          }
+        });
+      }
     </script>
   </body>
 </html>
