@@ -53,16 +53,29 @@
     <script src="src/map.js"></script>
     <script lang="javascript">
       window.onload = function() {
+        const mabes = [
+          {
+            'pos': [-5.151996, 119.416099],
+            'pop': 'Jalan Doktor Sam Ratulangi, Ujung Pandang, Mangkura, Kec. Makassar, Kota Makassar, Sulawesi Selatan 90113'
+          },
+          {
+            'pos': [-5.161595, 119.448821],
+            'pop': 'Ruko Mirah 2, Jl. Pengayoman, Pandang, Kec. Panakkukang, Kota Makassar, Sulawesi Selatan 90222'
+          },
+        ];
+
         FireMap.init('map', {
           zoom: 13,
           center: [-5.161595, 119.448821]
         });
 
+        FireMap.addMabes(mabes);
+
         Firebase.getLastItem(function(value) {
           const loc = [value.lat, value.lng];
 
           if (value.status) {
-            FireMap.addRoutingControl(L.latLng(loc));
+            FireMap.addRoutingControl(L.latLng(loc), mabes);
           } else {
             FireMap.removeRoutingControl();
           }

@@ -17,17 +17,6 @@ FireMap = (function(window) {
         overlayMaps = {},
         routingControl = null;
 
-    const mabes = [
-      {
-        'pos': [-5.151996, 119.416099],
-        'pop': 'Jalan Doktor Sam Ratulangi, Ujung Pandang, Mangkura, Kec. Makassar, Kota Makassar, Sulawesi Selatan 90113'
-      },
-      {
-        'pos': [-5.161595, 119.448821],
-        'pop': 'Ruko Mirah 2, Jl. Pengayoman, Pandang, Kec. Panakkukang, Kota Makassar, Sulawesi Selatan 90222'
-      },
-    ];
-
     const init = (mapLayerId, options) => {
         settings = L.extend(settings, options);
         mapId = mapLayerId;
@@ -38,15 +27,8 @@ FireMap = (function(window) {
         return map;
     };
 
-    const addRoutingControl = (loc) => {
-        if (routingControl != null) {
-            removeRoutingControl();
-        }
-
-        let p,
-            marker,
-            length = [],
-            coords = [];
+    const addMabes = (mabes) => {
+        let p, marker, coords = [];
 
         mabes.forEach((obj) => {
             marker = L.marker(obj.pos).addTo(map),
@@ -58,8 +40,16 @@ FireMap = (function(window) {
                     .setLatLng(obj.pos);
 
             marker.bindPopup(p).openPopup();
+        });
+    };
 
-            // cords from firefighter offices
+    const addRoutingControl = (loc, mabes) => {
+        if (routingControl != null) {
+            removeRoutingControl();
+        }
+
+        let coords = [];
+        mabes.forEach((obj) => {
             coords.push(obj.pos);
         });
 
@@ -91,11 +81,19 @@ FireMap = (function(window) {
             url  = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${loc.lat}&lon=${loc.lng}`;
 
         f(url).then(response => {
-            fire = L.marker(loc).addTo(map).bindPopup(`Titik Api: ${response.address.road}`).openPopup();
+            console.log(response);
+            let det;
+            if (response.addresstype == 'road') {
+                det = response.address.village;
+            } else if(response.addresstype == 'amenity') {
+                det = response.address.amenity;
+            }
+
+            fire = L.marker(loc).addTo(map).bindPopup(`Titik Api: ${response.address.road}. <br> Detail: ${det}`).openPopup();
 
             swal({
                 title: "Titik Api Terdeteksi!",
-                text: `Api terdeteksi di jalan ${response.address.road}`,
+                text: `Api terdeteksi di ${response.address.road} \n Perkiraan geographical point dari kantor terdekat ke titik api ${closset.distance}`,
                 icon: "info",
             });
         });
@@ -116,6 +114,7 @@ FireMap = (function(window) {
         if (routingControl != null) {
             map.removeControl(routingControl);
             map.removeLayer(circle);
+            map.removeLayer(fire);
             routingControl = null;
             circle = null;
             fire = null;
@@ -152,7 +151,7 @@ FireMap = (function(window) {
 
         baseMaps["OSM"] = L.tileLayer(`https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${API_KEY}`, {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 19,
+            maxZoom: 18,
             id: 'mapbox/streets-v11',
             tileSize: 512,
             zoomOffset: -1,
@@ -166,7 +165,8 @@ FireMap = (function(window) {
 
     return {
         init: init, addRoutingControl: addRoutingControl, removeRoutingControl: removeRoutingControl, 
-        panMap: panMap, invalidateMapSize: invalidateMapSize, getMap: getMap
+        panMap: panMap, invalidateMapSize: invalidateMapSize, getMap: getMap,
+        addMabes: addMabes
     }
 
 })(window);
