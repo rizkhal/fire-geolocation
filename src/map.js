@@ -82,18 +82,24 @@ FireMap = (function(window) {
 
         f(url).then(response => {
             console.log(response);
-            let det;
+            let det, road;
             if (response.addresstype == 'road') {
                 det = response.address.village;
-            } else if(response.addresstype == 'amenity') {
+
+                if (response.address.road == undefined) {
+                    road = det;
+                }
+            }
+
+            if(response.addresstype == 'amenity') {
                 det = response.address.amenity;
             }
 
-            fire = L.marker(loc).addTo(map).bindPopup(`Titik Api: ${response.address.road}. <br> Detail: ${det}`).openPopup();
+            fire = L.marker(loc).addTo(map).bindPopup(`Titik Api: ${road}. <br> Detail: ${det}`).openPopup();
 
             swal({
                 title: "Titik Api Terdeteksi!",
-                text: `Api terdeteksi di ${response.address.road} \n Perkiraan geographical point dari kantor terdekat ke titik api ${closset.distance}`,
+                text: `Api terdeteksi di ${road} \n Perkiraan geographical point dari kantor terdekat ke titik api ${closset.distance}`,
                 icon: "info",
             });
         });

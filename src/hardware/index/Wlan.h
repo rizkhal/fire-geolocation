@@ -2,8 +2,11 @@
 #define Wlan_h
 #include <ESP8266WiFi.h>
 
-#define SSID "tidak free"
-#define PASS "sarcesua"
+ #define SSID "tidak free"
+ #define PASS "sarcesua"
+
+// #define SSID "MW40CJ_1DBE"
+// #define PASS "71749404"
 
 class Wlan
 {
